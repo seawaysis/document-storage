@@ -1,0 +1,9 @@
+g = generate
+mo = models
+s = services
+co = controller
+
+nest g mo [model_name] //create models path => src/[model_name]
+
+nest g s [model_name]/services/[model_name] --flat --no-spec //create service
+nest g co [model_name]/controllers/[model_name] --flat --no-spec // create controller
