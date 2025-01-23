@@ -1,20 +1,19 @@
 <template>
   <v-container class="fill-height text-center">
-    <v-row align="center" 
+    <v-row 
     justify="center"
     >
-      <v-col :cols="6" 
+      <v-col 
+      :cols="6" 
       class="text-center"
       >
         <v-form>
           <v-text-field
             v-model="firstname"
-            :counter="10"
-            :rules="nameRules"
+            :counter="20"
             label="First name"
             required
           />
-
           <v-file-input 
             v-model="file"
             label="upload a file"
@@ -35,12 +34,13 @@
 </template>
 
 <script lang="ts">
-  import axios from 'axios';
+    import axios from 'axios';
 
   export default {
   data() {
     return {
       file: null,
+      firstname: '',
     };
   },
   methods: {
@@ -48,9 +48,11 @@
       console.log('File selected:', this.file);
     },
     async uploadFile() {
+        console.log("firstname : ",this.firstname)
       if (this.file) {
         const formData = new FormData();
         formData.append('file', this.file);
+        formData.append('firstname', this.firstname);
 
         try {
           const response = await axios.post('http://localhost:3000/upload', formData, {
