@@ -1,32 +1,38 @@
 <template>
   <v-container class="fill-height text-center">
-    <v-row 
-    justify="center"
-    >
-      <v-col 
-      :cols="6" 
-      class="text-center"
-      >
+    <v-row justify="center">
+        <v-col>
+            <v-table>
+                <thead>
+                  <th>test</th>
+                  <th>testttt</th>
+                </thead>
+                <tbody>
+                <tr>sdsd</tr>
+                <tr>sdsd</tr>
+                </tbody>
+            </v-table>
+        </v-col>
+    </v-row>
+    <v-row justify="center">
+      <v-col :cols="12" class="text-center">
         <v-form>
           <v-text-field
-            v-model="firstname"
+            v-model="name"
             :counter="20"
-            label="First name"
+            label="Name"
             required
+            @change="changeName"
           />
-          <v-file-input 
+          <span>{{ name }}</span>
+          <v-file-input
             v-model="file"
             label="upload a file"
             accept="file/*"
             @change="handleFileChange"
           />
 
-          <v-btn
-            :disabled="!file"
-            @click="uploadFile"
-          >
-            Upload
-          </v-btn>
+          <v-btn :disabled="!file" @click="uploadFile"> Upload </v-btn>
         </v-form>
       </v-col>
     </v-row>
@@ -34,36 +40,54 @@
 </template>
 
 <script lang="ts">
-    import axios from 'axios';
+import axios from "axios";
+import { ref } from "vue";
 
-  export default {
+const getName = ref<string>("test");
+export default {
+  //async setup(){
+  //    let persons = defineProps({
+  //        id: Number,
+  //        name: String,
+  //        createdAt: Date
+  //    });
+  //    persons = await axios.get('localhost:8080/personal');
+  //    console.log(persons);
+  //},
   data() {
     return {
       file: null,
-      firstname: '',
+      name: "",
     };
   },
   methods: {
     handleFileChange() {
-      console.log('File selected:', this.file);
+      console.log("File selected:", this.file);
+    },
+    changeName() {
+      getName.value = this.name;
     },
     async uploadFile() {
-        console.log("firstname : ",this.firstname)
+      console.log("name : ", this.name);
       if (this.file) {
         const formData = new FormData();
-        formData.append('file', this.file);
-        formData.append('firstname', this.firstname);
+        formData.append("file", this.file);
+        formData.append("name", this.name);
 
         try {
-          const response = await axios.post('http://localhost:3000/upload', formData, {
-            headers: {
-              'Content-Type': 'multipart/form-data',
-            },
-          });
+          const response = await axios.post(
+            "http://localhost:8080/personal",
+            formData,
+            {
+              headers: {
+                "Content-Type": "multipart/form-data",
+              },
+            }
+          );
 
-          console.log('File uploaded successfully:', response.data);
+          console.log("File uploaded successfully:", response.data);
         } catch (error) {
-          console.error('File upload error:', error);
+          console.error("File upload error:", error);
         }
       }
     },

@@ -26,6 +26,18 @@ services:
         - db
     networks:
       - crudreverse
+  minio:
+    image: minio/minio:latest
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: miniopassword
+    volumes:
+      - ./volume:/data
+    command: server --address ":9001" --console-address ":9000" /data
+    restart: always
   backend:
     # image: node
     container_name: backend-nestjs-crud
@@ -60,17 +72,17 @@ services:
   #    - backend
   #  networks:
   #    - crudreverse
-  # nginx:
-  #   container_name: crudproxy
-  #   build: ./nginx_crudproxy
-  #   image: nginx:latest
-  #   ports:
-  #     - 80:80
-  #   depends_on:
-  #     - frontend
-  #     - backend
-  #   networks:
-  #     - crudreverse
+  #nginx:
+  #  container_name: crudproxy
+  #  build: ./nginx_crudproxy
+  #  image: nginx:latest
+  #  ports:
+  #    - 80:80
+  #  depends_on:
+  #    #- frontend
+  #    - backend
+  #  networks:
+  #    - crudreverse
 networks:
   crudreverse:
     driver: bridge

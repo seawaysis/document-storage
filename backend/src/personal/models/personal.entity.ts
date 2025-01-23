@@ -9,7 +9,10 @@ export class PersonalInfoEntity {
   id: number;
 
   @Column({ default: '' })
-  name: string;
+  firstName: string;
+
+//  @Column({ type: 'timestamptz' })
+//  birthDate: Date;
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;

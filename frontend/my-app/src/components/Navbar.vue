@@ -4,7 +4,7 @@
       <v-app-bar-nav-icon />
     </template>
 
-    <v-app-bar-title>Application Bar</v-app-bar-title>
+    <v-app-bar-title>Document Storage</v-app-bar-title>
   </v-app-bar>
 </template>
 

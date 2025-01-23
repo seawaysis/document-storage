@@ -1,5 +1,6 @@
 export interface PersonalInfo {
   id?: number;
-  name?: string;
+  firstName?: string;
+//  birthDate?: Date;
   createdAt?: Date;
 }
