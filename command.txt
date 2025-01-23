@@ -8,3 +8,7 @@ nest g mo [model_name] //create models path => src/[model_name]
 
 nest g s [model_name]/services/[model_name] --flat --no-spec //create service
 nest g co [model_name]/controllers/[model_name] --flat --no-spec // create controller
+
+
+//vue js
+https://www.youtube.com/watch?v=uKYCEbOBBPk
