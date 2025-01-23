@@ -72,7 +72,7 @@ export default {
       if (this.file) {
         const formData = new FormData();
         formData.append("file", this.file);
-        formData.append("name", this.name);
+        formData.append("firstName", this.name);
 
         try {
           const response = await axios.post(

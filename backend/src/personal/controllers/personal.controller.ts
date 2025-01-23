@@ -26,7 +26,9 @@ export class PersonalController {
   @Post()
   @UseInterceptors(FileInterceptor('file', {
     storage: diskStorage({
-      destination: 'src/uploads/',
+      destination: function (req, file, callback) {
+        callback(null, './uploads/');
+      },
       filename: (req, file, callback) => {
         const uniqueSuffix = uuidv4() + extname(file.originalname);
         callback(null, uniqueSuffix);
@@ -35,6 +37,7 @@ export class PersonalController {
   }))
   async create(@Body() personalInfo: PersonalInfo,@UploadedFile() file: File): Promise<PersonalInfo> {
     console.log('File uploaded:', file);
+    //personalInfo.fileName = file;
     return await this.personalService.createPost(personalInfo);
   }
   @Get()

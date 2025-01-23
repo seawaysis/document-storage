@@ -11,8 +11,8 @@ export class PersonalInfoEntity {
   @Column({ default: '' })
   firstName: string;
 
-//  @Column({ type: 'timestamptz' })
-//  birthDate: Date;
+  @Column({ default: '' })
+  fileName: string;
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;

@@ -1,6 +1,6 @@
 export interface PersonalInfo {
   id?: number;
   firstName?: string;
-//  birthDate?: Date;
+  fileName?: string;
   createdAt?: Date;
 }
