@@ -1,11 +1,14 @@
 <template>
   <v-app>
     <v-main>
-      <router-view />
+      <Navbar />
+      <FormPersonal />
     </v-main>
   </v-app>
 </template>
 
 <script lang="ts" setup>
+  import FormPersonal from './components/FormPersonal.vue';
+  import Navbar from './components/Navbar.vue';
   //
 </script>
