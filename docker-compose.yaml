@@ -72,17 +72,17 @@ services:
      - backend
    networks:
      - crudreverse
-  #nginx:
-  #  container_name: crudproxy
-  #  build: ./nginx_crudproxy
-  #  image: nginx:latest
-  #  ports:
-  #    - 80:80
-  #  depends_on:
-  #    #- frontend
-  #    - backend
-  #  networks:
-  #    - crudreverse
+  nginx:
+   container_name: crudproxy
+   build: ./nginx_crudproxy
+   image: nginx:latest
+   ports:
+     - 80:80
+   depends_on:
+     - frontend
+     - backend
+   networks:
+     - crudreverse
 networks:
   crudreverse:
     driver: bridge

@@ -49,6 +49,7 @@ export default defineConfig({
     ],
   },
   server: {
+    host: '0.0.0.0', //allow access docker
     port: 3001,
   },
   css: {
