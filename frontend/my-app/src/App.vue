@@ -10,5 +10,4 @@
 <script lang="ts" setup>
   import FormPersonal from './components/FormPersonal.vue';
   import Navbar from './components/Navbar.vue';
-  //
 </script>

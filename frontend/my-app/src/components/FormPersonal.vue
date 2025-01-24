@@ -1,23 +1,36 @@
 <template>
   <v-container class="fill-height text-center">
-    <v-row justify="center" style="overflow: auto;">
+    <v-row 
+      justify="center" style="width : 100%">
       <v-col>
         <v-table>
           <thead>
             <tr>
-              <th>firstName</th>
-              <th>fileName</th>
+              <th>First Name</th>
+              <th>File Name</th>
               <th>createdAt</th>
+              <th>manage</th>
             </tr>
           </thead>
           <tbody>
-            <tr v-for="(v,i) in listDoc" :key="i">
+            <tr v-for="(v,i) in listDoc" 
+            :key="i">
               <td>{{ v.firstName }}</td>
               <td>{{ v.fileName }}</td>
               <td>{{ v.createdAt }}</td>
               <td>
-                <v-btn name="edit" type="btn">Edit</v-btn>
-                <v-btn name="del" type="btn">Delete</v-btn>
+                <v-form>
+                  <v-btn 
+                    name="edit"
+                    size="small"
+                    color="yellow"
+                    @click="editDoc">Edit</v-btn>
+                  <v-btn 
+                    name="del"
+                    size="small"
+                    color="red"
+                    @click="delDoc(v.id)">Delete</v-btn>
+                </v-form>
               </td>
             </tr>
           </tbody>
@@ -25,16 +38,17 @@
       </v-col>
     </v-row>
     <v-row justify="center">
-      <v-col :cols="12" class="text-center">
+      <v-col 
+        :cols="5" 
+        class="text-center">
         <v-form>
           <v-text-field
             v-model="name"
             :counter="20"
             label="Name"
             required
-            @change="changeName"
           />
-          <span>{{ name }}</span>
+          <!-- <span>{{ name }}</span> -->
           <v-file-input
             v-model="file"
             label="upload a file"
@@ -42,7 +56,9 @@
             @change="handleFileChange"
           />
 
-          <v-btn :disabled="!file" @click="uploadFile"> Upload </v-btn>
+          <v-btn 
+            :disabled="!file" 
+            @click="uploadFile">Upload</v-btn>
         </v-form>
       </v-col>
     </v-row>
@@ -58,28 +74,30 @@ interface Doc {
   firstName: string;
   fileName: string;
   createdAt: string;
+  file?: File;
 }
 
 export default {
-  // mounted(){
-  //   const list = axios.get('http://localhost:8080/personal').then(res => res.data);
-  //   console.log(list);
-  // }
   setup() {
-
+    const api_backend = import.meta.env.VITE_API_BACKEND;
     const name = ref<string>('');
     const file = ref<File | null>(null);
+
+    const editName = ref<string>('');
+    const editFile = ref<File | null>(null);
+
     const listDoc = ref<Doc[]>();
-    //const getName = ref<string>('');
 
     const handleFileChange = () => {
       console.log('File selected:', file.value);
     };
-
-    const changeName = () => {
-      //getName.value = name.value;
-    };
-
+    const editDoc = () => {
+      
+    }
+    const delDoc = async (id : number) => {
+      await axios.delete(api_backend+'personal/'+id).then(res => res.data); // replace with your API URL
+      loadData();
+    }
     const uploadFile = async () => {
       console.log('name : ', name.value);
       if (file.value) {
@@ -89,7 +107,33 @@ export default {
 
         try {
           const response = await axios.post(
-            'http://localhost:8080/personal',
+            api_backend+'personal',
+            formData,
+            {
+              headers: {
+                'Content-Type': 'multipart/form-data',
+              },
+            }
+          );
+          name.value = '';
+          file.value = null;
+          loadData();
+          console.log('File uploaded successfully:', response.data);
+        } catch (error) {
+          console.error('File upload error:', error);
+        }
+      }
+    };
+
+    const editUploadFile = async (id : number) => {
+      if (editFile.value) {
+        const formData = new FormData();
+        //formData.append('file', editFile.value);
+        formData.append('firstName', editName.value); //editName.value
+
+        try {
+          const response = await axios.patch(
+            api_backend+'personal/'+id,
             formData,
             {
               headers: {
@@ -98,15 +142,16 @@ export default {
             }
           );
 
-          console.log('File uploaded successfully:', response.data);
+          loadData();
+          console.log('Update successfully:', response.data);
         } catch (error) {
-          console.error('File upload error:', error);
+          console.error('Update error:', error);
         }
       }
     };
 
     const loadData = async () => {
-      listDoc.value = await axios.get('http://localhost:8080/personal').then(res => res.data); // replace with your API URL
+      listDoc.value = await axios.get(api_backend+'personal').then(res => res.data.reverse()); // replace with your API URL
     }
     onMounted(() => {
       loadData();
@@ -114,10 +159,14 @@ export default {
     return {
       name,
       file,
+      editName,
+      editFile,
       listDoc,
+      editDoc,
+      delDoc,
       handleFileChange,
-      changeName,
       uploadFile,
+      editUploadFile,
     };
   },
 };

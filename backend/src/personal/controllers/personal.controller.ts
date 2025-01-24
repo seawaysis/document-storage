@@ -26,18 +26,18 @@ export class PersonalController {
 // method ต่างๆ
   @Post()
   @UseInterceptors(FileInterceptor('file', {
-    // storage: diskStorage({
-    //   destination: './uploads', // กำหนดโฟลเดอร์ที่จัดเก็บไฟล์
-    //   filename: (req, file, cb) => {
-    //     const uniqueSuffix =
-    //       Date.now() + '-' + Math.round(Math.random() * 1e9);
-    //     cb(null, `${file.fieldname}-${uniqueSuffix}-${file.originalname}`);
-    //   },
-    // }),
+    storage: diskStorage({
+      destination: './uploads', // กำหนดโฟลเดอร์ที่จัดเก็บไฟล์
+      filename: (req, file, cb) => {
+        const uniqueSuffix =
+          Date.now() + '-' + Math.round(Math.random() * 1e9);
+        cb(null, `${file.fieldname}-${uniqueSuffix}-${file.originalname.replace(/\s/g,'')}`);
+      },
+    }),
   }))
   async create(@Body() personalInfo: PersonalInfo,@UploadedFile() file: Express.Multer.File): Promise<PersonalInfo> {
     console.log('File uploaded:', file);
-    personalInfo.fileName = file.originalname;
+    personalInfo.fileName = file.originalname.replace(/\s/g,'');
     return await this.personalService.createPost(personalInfo);
   }
   @Get()
