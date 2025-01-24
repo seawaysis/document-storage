@@ -4,6 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { PersonalModule } from './personal/personal.module';
+import { MinioModule } from './minio/minio.module';
 
 @Module({
   imports: [
@@ -19,8 +20,9 @@ import { PersonalModule } from './personal/personal.module';
       synchronize: true,
     }),
     PersonalModule,
+    MinioModule,
   ],
-  controllers: [AppController],
+  controllers: [AppController,],
   providers: [AppService],
 })
 export class AppModule {}

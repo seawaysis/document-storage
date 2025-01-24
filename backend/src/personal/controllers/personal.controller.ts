@@ -12,11 +12,12 @@ import {
 import { DeleteResult, UpdateResult } from 'typeorm';
 import { PersonalInfo } from '../models/personal.interface';
 import { PersonalService } from '../services/personal.service';
+import { MinioService } from '../../minio/service/minio/minio.service';
 
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
-import { v4 as uuidv4 } from 'uuid';
-import { extname } from 'path';
+// import { v4 as uuidv4 } from 'uuid';
+// import { extname } from 'path';
 
 @Controller('personal')//prefix เส้น api 
 export class PersonalController {
@@ -25,19 +26,18 @@ export class PersonalController {
 // method ต่างๆ
   @Post()
   @UseInterceptors(FileInterceptor('file', {
-    storage: diskStorage({
-      destination: function (req, file, callback) {
-        callback(null, './uploads/');
-      },
-      filename: (req, file, callback) => {
-        const uniqueSuffix = uuidv4() + extname(file.originalname);
-        callback(null, uniqueSuffix);
-      }
-    })
+    // storage: diskStorage({
+    //   destination: './uploads', // กำหนดโฟลเดอร์ที่จัดเก็บไฟล์
+    //   filename: (req, file, cb) => {
+    //     const uniqueSuffix =
+    //       Date.now() + '-' + Math.round(Math.random() * 1e9);
+    //     cb(null, `${file.fieldname}-${uniqueSuffix}-${file.originalname}`);
+    //   },
+    // }),
   }))
-  async create(@Body() personalInfo: PersonalInfo,@UploadedFile() file: File): Promise<PersonalInfo> {
+  async create(@Body() personalInfo: PersonalInfo,@UploadedFile() file: Express.Multer.File): Promise<PersonalInfo> {
     console.log('File uploaded:', file);
-    //personalInfo.fileName = file;
+    personalInfo.fileName = file.originalname;
     return await this.personalService.createPost(personalInfo);
   }
   @Get()

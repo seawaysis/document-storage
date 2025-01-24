@@ -1,18 +1,28 @@
 <template>
   <v-container class="fill-height text-center">
-    <v-row justify="center">
-        <v-col>
-            <v-table>
-                <thead>
-                  <th>test</th>
-                  <th>testttt</th>
-                </thead>
-                <tbody>
-                <tr>sdsd</tr>
-                <tr>sdsd</tr>
-                </tbody>
-            </v-table>
-        </v-col>
+    <v-row justify="center" style="overflow: auto;">
+      <v-col>
+        <v-table>
+          <thead>
+            <tr>
+              <th>firstName</th>
+              <th>fileName</th>
+              <th>createdAt</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="(v,i) in listDoc" :key="i">
+              <td>{{ v.firstName }}</td>
+              <td>{{ v.fileName }}</td>
+              <td>{{ v.createdAt }}</td>
+              <td>
+                <v-btn name="edit" type="btn">Edit</v-btn>
+                <v-btn name="del" type="btn">Delete</v-btn>
+              </td>
+            </tr>
+          </tbody>
+        </v-table>
+      </v-col>
     </v-row>
     <v-row justify="center">
       <v-col :cols="12" class="text-center">
@@ -40,57 +50,75 @@
 </template>
 
 <script lang="ts">
-import axios from "axios";
-import { ref } from "vue";
+import axios from 'axios';
+import { onMounted,ref } from 'vue';
 
-const getName = ref<string>("test");
+interface Doc {
+  id: number;
+  firstName: string;
+  fileName: string;
+  createdAt: string;
+}
+
 export default {
-  //async setup(){
-  //    let persons = defineProps({
-  //        id: Number,
-  //        name: String,
-  //        createdAt: Date
-  //    });
-  //    persons = await axios.get('localhost:8080/personal');
-  //    console.log(persons);
-  //},
-  data() {
-    return {
-      file: null,
-      name: "",
+  // mounted(){
+  //   const list = axios.get('http://localhost:8080/personal').then(res => res.data);
+  //   console.log(list);
+  // }
+  setup() {
+
+    const name = ref<string>('');
+    const file = ref<File | null>(null);
+    const listDoc = ref<Doc[]>();
+    //const getName = ref<string>('');
+
+    const handleFileChange = () => {
+      console.log('File selected:', file.value);
     };
-  },
-  methods: {
-    handleFileChange() {
-      console.log("File selected:", this.file);
-    },
-    changeName() {
-      getName.value = this.name;
-    },
-    async uploadFile() {
-      console.log("name : ", this.name);
-      if (this.file) {
+
+    const changeName = () => {
+      //getName.value = name.value;
+    };
+
+    const uploadFile = async () => {
+      console.log('name : ', name.value);
+      if (file.value) {
         const formData = new FormData();
-        formData.append("file", this.file);
-        formData.append("firstName", this.name);
+        formData.append('file', file.value);
+        formData.append('firstName', name.value);
 
         try {
           const response = await axios.post(
-            "http://localhost:8080/personal",
+            'http://localhost:8080/personal',
             formData,
             {
               headers: {
-                "Content-Type": "multipart/form-data",
+                'Content-Type': 'multipart/form-data',
               },
             }
           );
 
-          console.log("File uploaded successfully:", response.data);
+          console.log('File uploaded successfully:', response.data);
         } catch (error) {
-          console.error("File upload error:", error);
+          console.error('File upload error:', error);
         }
       }
-    },
+    };
+
+    const loadData = async () => {
+      listDoc.value = await axios.get('http://localhost:8080/personal').then(res => res.data); // replace with your API URL
+    }
+    onMounted(() => {
+      loadData();
+    });
+    return {
+      name,
+      file,
+      listDoc,
+      handleFileChange,
+      changeName,
+      uploadFile,
+    };
   },
 };
 </script>
