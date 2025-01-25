@@ -37,7 +37,7 @@ services:
     volumes:
       - ./minio/volume:/data
     command: server --address ":9001" --console-address ":9000" /data
-    restart: always
+    restart : on-failure
   backend:
     # image: node
     container_name: backend-nestjs-crud
@@ -61,7 +61,7 @@ services:
      - '/app/node_modules'
    tty: true
    ports:
-     - '3001:3001'
+     - '3000:3001'
    environment:
      - CHOKIDAR_USEPOLLING=true
      - WATCHPACK_POLLING=true

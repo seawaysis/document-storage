@@ -12,6 +12,21 @@ export class PersonalInfoEntity {
   firstName: string;
 
   @Column({ default: '' })
+  lastName: string;
+
+  @Column({ default: '' })
+  gender: string;
+
+  @Column({ default: '' })
+  email: string;
+
+  @Column({ default: '' })
+  description: string;
+
+  @Column({ type: 'timestamp' })
+  birthDate: Date;
+  
+  @Column({ default: '' })
   fileName: string;
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })

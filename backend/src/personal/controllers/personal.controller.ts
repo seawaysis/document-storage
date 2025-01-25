@@ -37,7 +37,7 @@ export class PersonalController {
   }))
   async create(@Body() personalInfo: PersonalInfo,@UploadedFile() file: Express.Multer.File): Promise<PersonalInfo> {
     console.log('File uploaded:', file);
-    personalInfo.fileName = file.originalname.replace(/\s/g,'');
+    personalInfo.fileName = file.filename;
     return await this.personalService.createPost(personalInfo);
   }
   @Get()

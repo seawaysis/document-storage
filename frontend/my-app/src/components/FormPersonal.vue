@@ -24,7 +24,7 @@
                     name="edit"
                     size="small"
                     color="yellow"
-                    @click="editDoc">Edit</v-btn>
+                    @click="editDoc(v.id)">Edit</v-btn>
                   <v-btn 
                     name="del"
                     size="small"
@@ -39,35 +39,92 @@
     </v-row>
     <v-row justify="center">
       <v-col 
-        :cols="5" 
+        :cols="8" 
         class="text-center">
         <v-form>
+          <v-row>
+            <v-col
+              :cols="6"
+            >
+              <v-text-field
+                v-model="dataUpload.firstName"
+                :counter="20"
+                label="First name"
+                required
+              />
+            </v-col>
+            <v-col
+              :cols="6"
+            >
+              <v-text-field
+                v-model="dataUpload.lastName"
+                :counter="20"
+                label="Last name"
+                required
+              />
+            </v-col>
+          </v-row>
+          <v-radio-group 
+            v-model="dataUpload.gender"
+            inline
+            required
+          >
+            <v-radio label="Male" value="male"></v-radio>
+            <v-radio label="Female" value="female"></v-radio>
+          </v-radio-group>
           <v-text-field
-            v-model="name"
-            :counter="20"
-            label="Name"
+          v-model="dataUpload.email"
+            label="Email address"
+            placeholder="johndoe@gmail.com"
+            type="email"
             required
           />
-          <!-- <span>{{ name }}</span> -->
+          <v-textarea
+            v-model="dataUpload.description"
+            label="description"
+          />
+          <v-date-input 
+            clearable 
+            label="Date input"
+            v-model="dataUpload.birthDate"
+            required
+          />
           <v-file-input
-            v-model="file"
+            v-model="dataUpload.file"
             label="upload a file"
             accept="file/*"
             @change="handleFileChange"
           />
 
           <v-btn 
-            :disabled="!file" 
+            :disabled="!dataUpload.file" 
             @click="uploadFile">Upload</v-btn>
         </v-form>
       </v-col>
     </v-row>
+
+    <v-dialog
+      v-if="dialogCompose === true"
+      v-model="dialogCompose"
+      width="700">
+      <v-card>
+        <v-card-title 
+          class="headline black" 
+          primary-title>
+          Edit
+        </v-card-title>
+        <v-card-text class="pa-5">
+          qwdqwdsa
+        </v-card-text>
+      </v-card>
+    </v-dialog>
   </v-container>
 </template>
 
 <script lang="ts">
 import axios from 'axios';
 import { onMounted,ref } from 'vue';
+//import dialogEdit from './components/dialogEdit.vue';
 
 interface Doc {
   id: number;
@@ -77,11 +134,30 @@ interface Doc {
   file?: File;
 }
 
+interface DataUpload {
+  firstName: string;
+  lastName: string;
+  gender: string;
+  email: string;
+  birthDate: Date;
+  description: string;
+  file: File | null;
+}
 export default {
   setup() {
     const api_backend = import.meta.env.VITE_API_BACKEND;
-    const name = ref<string>('');
-    const file = ref<File | null>(null);
+    const dialogCompose = ref<boolean>(false);
+    // const name = ref<string>('');
+    // const file = ref<File | null>(null);
+    const dataUpload = ref<DataUpload>({
+      firstName: '',
+      lastName: '',
+      gender: '',
+      email: '',
+      description: '',
+      birthDate: new Date(),
+      file: null,
+    });
 
     const editName = ref<string>('');
     const editFile = ref<File | null>(null);
@@ -89,21 +165,29 @@ export default {
     const listDoc = ref<Doc[]>();
 
     const handleFileChange = () => {
-      console.log('File selected:', file.value);
+      //console.log('File selected:', dataUpload.file.value);
     };
-    const editDoc = () => {
-      
+    const editDoc = (id:number) => {
+      dialogCompose.value = true;
+      console.log(id);
+      // let getDoc = listDoc.value?.map((v)=> {
+        
+      // });
     }
     const delDoc = async (id : number) => {
       await axios.delete(api_backend+'personal/'+id).then(res => res.data); // replace with your API URL
       loadData();
     }
     const uploadFile = async () => {
-      console.log('name : ', name.value);
-      if (file.value) {
+      if (dataUpload.value.file) {
         const formData = new FormData();
-        formData.append('file', file.value);
-        formData.append('firstName', name.value);
+        formData.append('file', dataUpload.value.file);
+        formData.append('firstName', dataUpload.value.firstName);
+        formData.append('lastName', dataUpload.value.lastName);
+        formData.append('gender', dataUpload.value.gender);
+        formData.append('email', dataUpload.value.email);
+        formData.append('description', dataUpload.value.description);
+        formData.append('birthDate', dataUpload.value.birthDate.toString());
 
         try {
           const response = await axios.post(
@@ -115,8 +199,15 @@ export default {
               },
             }
           );
-          name.value = '';
-          file.value = null;
+          dataUpload.value = {
+            firstName: '',
+            lastName: '',
+            gender: '',
+            email: '',
+            description: '',
+            birthDate: new Date(),
+            file: null,
+          }
           loadData();
           console.log('File uploaded successfully:', response.data);
         } catch (error) {
@@ -157,13 +248,13 @@ export default {
       loadData();
     });
     return {
-      name,
-      file,
+      dataUpload,
       editName,
       editFile,
       listDoc,
       editDoc,
       delDoc,
+      dialogCompose,
       handleFileChange,
       uploadFile,
       editUploadFile,
