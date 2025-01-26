@@ -12,7 +12,7 @@ import {
 import { DeleteResult, UpdateResult } from 'typeorm';
 import { PersonalInfo } from '../models/personal.interface';
 import { PersonalService } from '../services/personal.service';
-import { MinioService } from '../../minio/service/minio/minio.service';
+import { MinioService } from '../../minio/service/minio.service';
 
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';

@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { MinioService } from './service/minio/minio.service';
+import { MinioService } from './service/minio.service';
 import { MulterModule } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 

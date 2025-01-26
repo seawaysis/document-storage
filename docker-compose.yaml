@@ -12,6 +12,8 @@ services:
       - POSTGRES_PASSWORD=pass_crud
       - POSTGRES_USER=user_crud
       - POSTGRES_DB=db_crud
+      - TZ=Asia/Bangkok
+      - PGTZ=Asia/Bangkok
     networks:
       - crudreverse
   pgadmin:

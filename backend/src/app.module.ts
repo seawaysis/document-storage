@@ -18,6 +18,10 @@ import { MinioModule } from './minio/minio.module';
       database: process.env.POSTGRES_DATABASE,
       autoLoadEntities: true,
       synchronize: true,
+      extra: {
+        // Runs a query before the connection is made to set the timezone
+        //statement: 'SET TIMEZONE = "+07:00";',
+      },
     }),
     PersonalModule,
     MinioModule,

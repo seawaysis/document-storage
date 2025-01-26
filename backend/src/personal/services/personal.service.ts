@@ -6,7 +6,7 @@ import { PersonalInfo } from '../models/personal.interface';
 
 import * as fs from 'fs';
 import path from 'path';
-import { MinioService } from 'src/minio/service/minio/minio.service';
+import { MinioService } from 'src/minio/service/minio.service';
 
 @Injectable()
 export class PersonalService {

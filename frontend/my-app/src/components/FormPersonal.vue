@@ -12,6 +12,9 @@
               <th>manage</th>
             </tr>
           </thead>
+          <tbody v-if="listDoc?.length === 0">
+            <tr><td colspan="4" style="color:gray;">Empty</td></tr>
+          </tbody>
           <tbody 
             v-for="(v,i) in listDoc" 
             :key="i">
@@ -33,20 +36,32 @@
               </td>
             </tr>
             <tr>
-              <td colspan="3" style="text-align: left; padding:10px 0 10px 20px; border-collapse: collapse; border-bottom: 2px solid gray">
-                <span><b>First name : </b>{{ v.firstName }}</span>&nbsp;&nbsp;
-                <span><b>Last name : </b>{{ v.lastName }}</span><br>
-                <span><b>Birth date: </b>{{ v.birthDate }}</span>&nbsp;&nbsp;
-                <span><b>Gender : </b>{{ v.gender }}</span><br>
-                <span><b>Email : </b>{{ v.email }}</span><br>
-                <span><b>Description : </b>{{ v.description }}</span><br>
+              <td colspan="4" style="text-align: left; padding:10px 0 10px 20px; border-collapse: collapse; border-bottom: 2px solid gray">
+                <v-row no-gutters>
+                  <v-col cols="12" md="6" lg="4">
+                    <span><b>First name : </b>{{ v.firstName }}</span>&nbsp;&nbsp;
+                    <span><b>Last name : </b>{{ v.lastName }}</span>
+                  </v-col>
+                  <v-col cols="12" md="6" lg="4">
+                    <span><b>Birth date: </b>{{ v.birthDate }}</span>&nbsp;&nbsp;
+                    <span><b>Gender : </b>{{ v.gender }}</span>
+                  </v-col>
+                  <v-col cols="12" lg="4">
+                    <span><b>Email : </b>{{ v.email }}</span>
+                  </v-col>
+                </v-row>
+                <v-row no-gutters>
+                  <v-col cols="12" md="6">
+                    <span><b>Description : </b>{{ v.description }}</span>
+                  </v-col>
+                </v-row>
               </td>
             </tr>
           </tbody>
         </v-table>
       </v-col>
     </v-row>
-    <v-row justify="center">
+    <v-row justify="center" class="ma-2">
       <v-col 
         :cols="10" 
         class="text-center"
@@ -56,7 +71,8 @@
         <v-form>
           <v-row>
             <v-col
-              :cols="6"
+              cols="12"
+              sm="6"
             >
               <v-text-field
                 v-model="dataUpload.firstName"
@@ -66,7 +82,8 @@
               />
             </v-col>
             <v-col
-              :cols="6"
+              cols="12"
+              sm="6"
             >
               <v-text-field
                 v-model="dataUpload.lastName"
@@ -76,14 +93,32 @@
               />
             </v-col>
           </v-row>
-          <v-radio-group 
-            v-model="dataUpload.gender"
-            inline
-            required
-          >
-            <v-radio label="Male" value="male"></v-radio>
-            <v-radio label="Female" value="female"></v-radio>
-          </v-radio-group>
+          <v-row>
+            <v-col
+              cols="12"
+              sm="6"
+            >
+              <v-radio-group 
+                v-model="dataUpload.gender"
+                inline
+                required
+              >
+                <v-radio label="Male" value="male"></v-radio>
+                <v-radio label="Female" value="female"></v-radio>
+              </v-radio-group>
+            </v-col>
+            <v-col
+              cols="12"
+              sm="6"
+            >
+              <v-date-input 
+                clearable 
+                label="Birth day"
+                v-model="dataUpload.birthDate"
+                required
+              />
+            </v-col>
+          </v-row>
           <v-text-field
             v-model="dataUpload.email"
             label="Email address"
@@ -94,12 +129,6 @@
           <v-textarea
             v-model="dataUpload.description"
             label="description"
-          />
-          <v-date-input 
-            clearable 
-            label="Date input"
-            v-model="dataUpload.birthDate"
-            required
           />
           <v-file-input
             v-model="dataUpload.file"
@@ -117,7 +146,7 @@
     <dialogEdit 
       :dialogCompose="dialogCompose"
     />
-    <v-row justify="center">
+    <v-row justify="center" class="ma-2">
       <v-col 
         :cols="10" 
         class="text-center"
@@ -126,7 +155,8 @@
         <v-form>
           <v-row>
             <v-col
-              :cols="6"
+              cols="12"
+              sm="6"
             >
               <v-text-field
                 v-model="dataUpdate.firstName"
@@ -137,7 +167,8 @@
               />
             </v-col>
             <v-col
-              :cols="6"
+              cols="12"
+              sm="6"
             >
               <v-text-field
                 v-model="dataUpdate.lastName"
@@ -148,15 +179,31 @@
               />
             </v-col>
           </v-row>
-          <v-radio-group 
-            v-model="dataUpdate.gender"
-            inline
-            required
-            :disabled="!dataUpdate.id"
-          >
-            <v-radio label="Male" value="male"></v-radio>
-            <v-radio label="Female" value="female"></v-radio>
-          </v-radio-group>
+          <v-row>
+            <v-col
+              cols="12"
+              sm="6"
+            >
+              <v-radio-group 
+                v-model="dataUpdate.gender"
+                inline
+                required
+                :disabled="!dataUpdate.id"
+              >
+                <v-radio label="Male" value="male"></v-radio>
+                <v-radio label="Female" value="female"></v-radio>
+              </v-radio-group>
+            </v-col>
+            <v-col>
+              <v-date-input 
+                clearable 
+                label="Birth day"
+                v-model="dataUpdate.birthDate"
+                :disabled="!dataUpdate.id"
+                required
+              />
+            </v-col>
+          </v-row>
           <v-text-field
           v-model="dataUpdate.email"
             label="Email address"
@@ -169,13 +216,6 @@
             v-model="dataUpdate.description"
             label="description"
             :disabled="!dataUpdate.id"
-          />
-          <v-date-input 
-            clearable 
-            label="Date input"
-            v-model="dataUpdate.birthDate"
-            :disabled="!dataUpdate.id"
-            required
           />
           <v-file-input
             v-model="dataUpdate.file"
