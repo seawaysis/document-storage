@@ -4,6 +4,7 @@ import {
   Get,
   Param,
   Patch,
+  Put,
   Post,
   Delete,
   UseInterceptors,
@@ -44,10 +45,21 @@ export class PersonalController {
   async findAll(): Promise<PersonalInfo[]> {
     return await this.personalService.findAllPosts();
   }
-  @Patch(':id')
+  @Put(':id')
+  @UseInterceptors(FileInterceptor('file', {
+    storage: diskStorage({
+      destination: './uploads', // กำหนดโฟลเดอร์ที่จัดเก็บไฟล์
+      filename: (req, file, cb) => {
+        const uniqueSuffix =
+          Date.now() + '-' + Math.round(Math.random() * 1e9);
+        cb(null, `${file.fieldname}-${uniqueSuffix}-${file.originalname.replace(/\s/g,'')}`);
+      },
+    }),
+  }))
   async update(
     @Param('id') id: number,
     @Body() personalInfo: PersonalInfo,
+    @UploadedFile() file: Express.Multer.File
   ): Promise<UpdateResult> {
     return await this.personalService.updatePost(id, personalInfo);
   }

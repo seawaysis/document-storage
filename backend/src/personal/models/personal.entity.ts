@@ -23,7 +23,7 @@ export class PersonalInfoEntity {
   @Column({ default: '' })
   description: string;
 
-  @Column({ type: 'timestamp' })
+  @Column({ type: 'date' })
   birthDate: Date;
   
   @Column({ default: '' })

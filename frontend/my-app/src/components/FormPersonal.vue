@@ -6,31 +6,38 @@
         <v-table>
           <thead>
             <tr>
-              <th>First Name</th>
               <th>File Name</th>
               <th>createdAt</th>
               <th>manage</th>
             </tr>
           </thead>
-          <tbody>
-            <tr v-for="(v,i) in listDoc" 
+          <tbody 
+            v-for="(v,i) in listDoc" 
             :key="i">
-              <td>{{ v.firstName }}</td>
+            <tr>
               <td>{{ v.fileName }}</td>
               <td>{{ v.createdAt }}</td>
               <td>
-                <v-form>
-                  <v-btn 
-                    name="edit"
-                    size="small"
-                    color="yellow"
-                    @click="editDoc(v.id)">Edit</v-btn>
-                  <v-btn 
-                    name="del"
-                    size="small"
-                    color="red"
-                    @click="delDoc(v.id)">Delete</v-btn>
-                </v-form>
+                <v-btn 
+                  name="edit"
+                  size="small"
+                  color="yellow"
+                  @click="editDoc(v.id)">Edit</v-btn>
+                <v-btn 
+                  name="del"
+                  size="small"
+                  color="red"
+                  @click="delDoc(v.id)">Delete</v-btn>
+              </td>
+            </tr>
+            <tr>
+              <td colspan="3" style="text-align: left; padding:10px 0 10px 20px; border-collapse: collapse; border-bottom: 2px solid gray">
+                <span><b>First name : </b>{{ v.firstName }}</span>&nbsp;&nbsp;
+                <span><b>Last name : </b>{{ v.lastName }}</span><br>
+                <span><b>Birth date: </b>{{ v.birthDate }}</span>&nbsp;&nbsp;
+                <span><b>Gender : </b>{{ v.gender }}</span><br>
+                <span><b>Email : </b>{{ v.email }}</span><br>
+                <span><b>Description : </b>{{ v.description }}</span><br>
               </td>
             </tr>
           </tbody>
@@ -73,7 +80,7 @@
             <v-radio label="Female" value="female"></v-radio>
           </v-radio-group>
           <v-text-field
-          v-model="dataUpload.email"
+            v-model="dataUpload.email"
             label="Email address"
             placeholder="johndoe@gmail.com"
             type="email"
@@ -93,7 +100,6 @@
             v-model="dataUpload.file"
             label="upload a file"
             accept="file/*"
-            @change="handleFileChange"
           />
 
           <v-btn 
@@ -103,32 +109,88 @@
       </v-col>
     </v-row>
 
-    <v-dialog
-      v-if="dialogCompose === true"
-      v-model="dialogCompose"
-      width="700">
-      <v-card>
-        <v-card-title 
-          class="headline black" 
-          primary-title>
-          Edit
-        </v-card-title>
-        <v-card-text class="pa-5">
-          qwdqwdsa
-        </v-card-text>
-      </v-card>
-    </v-dialog>
+    <dialogEdit 
+      :dialogCompose="dialogCompose"
+    />
+    <v-row justify="center">
+      <v-col 
+        :cols="8" 
+        class="text-center">
+        <h1>update</h1>
+        <v-form>
+          <v-row>
+            <v-col
+              :cols="6"
+            >
+              <v-text-field
+                v-model="dataUpdate.firstName"
+                :counter="20"
+                label="First name"
+                required
+              />
+            </v-col>
+            <v-col
+              :cols="6"
+            >
+              <v-text-field
+                v-model="dataUpdate.lastName"
+                :counter="20"
+                label="Last name"
+                required
+              />
+            </v-col>
+          </v-row>
+          <v-radio-group 
+            v-model="dataUpdate.gender"
+            inline
+            required
+          >
+            <v-radio label="Male" value="male"></v-radio>
+            <v-radio label="Female" value="female"></v-radio>
+          </v-radio-group>
+          <v-text-field
+          v-model="dataUpdate.email"
+            label="Email address"
+            placeholder="johndoe@gmail.com"
+            type="email"
+            required
+          />
+          <v-textarea
+            v-model="dataUpdate.description"
+            label="description"
+          />
+          <v-date-input 
+            clearable 
+            label="Date input"
+            v-model="dataUpdate.birthDate"
+            required
+          />
+          <v-file-input
+            v-model="dataUpdate.file"
+            label="upload a file"
+            accept="file/*"
+          />
+
+          <v-btn 
+            @click="editUploadFile">Update</v-btn>
+        </v-form>
+      </v-col>
+    </v-row>
   </v-container>
 </template>
-
 <script lang="ts">
 import axios from 'axios';
 import { onMounted,ref } from 'vue';
-//import dialogEdit from './components/dialogEdit.vue';
+import dialogEdit from './dialogEdit.vue';
 
 interface Doc {
   id: number;
   firstName: string;
+  lastName: string;
+  gender: string;
+  email: string;
+  birthDate: Date;
+  description: string;
   fileName: string;
   createdAt: string;
   file?: File;
@@ -143,13 +205,34 @@ interface DataUpload {
   description: string;
   file: File | null;
 }
+interface DataUpdate {
+  id: number;
+  firstName: string;
+  lastName: string;
+  gender: string;
+  email: string;
+  birthDate: Date;
+  description: string;
+  file?: File | null;
+}
 export default {
+  components: {
+    dialogEdit
+  },
   setup() {
     const api_backend = import.meta.env.VITE_API_BACKEND;
     const dialogCompose = ref<boolean>(false);
-    // const name = ref<string>('');
-    // const file = ref<File | null>(null);
     const dataUpload = ref<DataUpload>({
+      firstName: '',
+      lastName: '',
+      gender: '',
+      email: '',
+      description: '',
+      birthDate: new Date(),
+      file: null,
+    });
+    const dataUpdate = ref<DataUpdate>({
+      id: 0,
       firstName: '',
       lastName: '',
       gender: '',
@@ -163,16 +246,23 @@ export default {
     const editFile = ref<File | null>(null);
 
     const listDoc = ref<Doc[]>();
-
-    const handleFileChange = () => {
-      //console.log('File selected:', dataUpload.file.value);
-    };
+    
     const editDoc = (id:number) => {
       dialogCompose.value = true;
-      console.log(id);
-      // let getDoc = listDoc.value?.map((v)=> {
-        
-      // });
+      const getData = listDoc.value?.find(item=>item.id === id);
+      if(getData){
+        dataUpdate.value = {
+          id : getData?.id,
+          firstName : getData?.firstName,
+          lastName : getData?.lastName,
+          gender : getData?.gender,
+          email : getData?.email,
+          description : getData?.description,
+          birthDate : new Date(getData?.birthDate),
+          file: getData.file ?? null,
+        }
+      }
+      console.log(dataUpdate);
     }
     const delDoc = async (id : number) => {
       await axios.delete(api_backend+'personal/'+id).then(res => res.data); // replace with your API URL
@@ -187,7 +277,7 @@ export default {
         formData.append('gender', dataUpload.value.gender);
         formData.append('email', dataUpload.value.email);
         formData.append('description', dataUpload.value.description);
-        formData.append('birthDate', dataUpload.value.birthDate.toString());
+        formData.append('birthDate', dataUpload.value.birthDate.toLocaleDateString('en-US').toString());
 
         try {
           const response = await axios.post(
@@ -216,15 +306,19 @@ export default {
       }
     };
 
-    const editUploadFile = async (id : number) => {
-      if (editFile.value) {
+    const editUploadFile = async () => {
         const formData = new FormData();
-        //formData.append('file', editFile.value);
-        formData.append('firstName', editName.value); //editName.value
+        if (dataUpdate.value.file) {formData.append('file', dataUpdate.value.file);}
+        formData.append('firstName', dataUpdate.value.firstName);
+        formData.append('lastName', dataUpdate.value.lastName);
+        formData.append('gender', dataUpdate.value.gender);
+        formData.append('email', dataUpdate.value.email);
+        formData.append('description', dataUpdate.value.description);
+        formData.append('birthDate', dataUpdate.value.birthDate.toLocaleDateString('en-EN').toString());
 
         try {
-          const response = await axios.patch(
-            api_backend+'personal/'+id,
+          const response = await axios.put(
+            api_backend+'personal/'+dataUpdate.value.id,
             formData,
             {
               headers: {
@@ -232,13 +326,21 @@ export default {
               },
             }
           );
-
+          dataUpdate.value = {
+            id: 0,
+            firstName: '',
+            lastName: '',
+            gender: '',
+            email: '',
+            description: '',
+            birthDate: new Date(),
+            file: null,
+          }
           loadData();
           console.log('Update successfully:', response.data);
         } catch (error) {
           console.error('Update error:', error);
         }
-      }
     };
 
     const loadData = async () => {
@@ -249,13 +351,13 @@ export default {
     });
     return {
       dataUpload,
+      dataUpdate,
       editName,
       editFile,
       listDoc,
       editDoc,
       delDoc,
       dialogCompose,
-      handleFileChange,
       uploadFile,
       editUploadFile,
     };
