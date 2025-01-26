@@ -37,7 +37,10 @@ services:
     volumes:
       - ./minio/volume:/data
     command: server --address ":9001" --console-address ":9000" /data
+    # command: server /data
     restart : on-failure
+    networks:
+     - crudreverse
   backend:
     # image: node
     container_name: backend-nestjs-crud

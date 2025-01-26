@@ -6,6 +6,10 @@ export interface PersonalInfo {
   email?: string;
   birthDate?: Date;
   description?: string;
+  filePath?: string;
   fileName?: string;
+  etag?: string;
+  versionId? : string;
   createdAt?: Date;
+  updatedAt?: Date;
 }

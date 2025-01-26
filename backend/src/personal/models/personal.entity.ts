@@ -1,3 +1,4 @@
+import { Test } from '@nestjs/testing';
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 //ชื่อตาราง
@@ -29,6 +30,18 @@ export class PersonalInfoEntity {
   @Column({ default: '' })
   fileName: string;
 
+  @Column({ default: '' })
+  filePath: string;
+
+  @Column({ default: '' })
+  etag: string;
+
+  @Column({ default: '' })
+  versionId: string;
+
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;
+
+  @Column({ type: 'timestamp'})
+  updatedAt: Date;
 }

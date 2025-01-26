@@ -8,6 +8,7 @@
             <tr>
               <th>File Name</th>
               <th>createdAt</th>
+              <th>updatedAt</th>
               <th>manage</th>
             </tr>
           </thead>
@@ -17,6 +18,7 @@
             <tr>
               <td>{{ v.fileName }}</td>
               <td>{{ v.createdAt }}</td>
+              <td>{{ v.updatedAt }}</td>
               <td>
                 <v-btn 
                   name="edit"
@@ -46,8 +48,11 @@
     </v-row>
     <v-row justify="center">
       <v-col 
-        :cols="8" 
-        class="text-center">
+        :cols="10" 
+        class="text-center"
+        style="border: 2px solid gray;border-radius: 5px;"
+        >
+        <h1>Insert</h1>
         <v-form>
           <v-row>
             <v-col
@@ -114,8 +119,9 @@
     />
     <v-row justify="center">
       <v-col 
-        :cols="8" 
-        class="text-center">
+        :cols="10" 
+        class="text-center"
+        style="border: 2px solid gray;border-radius: 5px;">
         <h1>update</h1>
         <v-form>
           <v-row>
@@ -126,6 +132,7 @@
                 v-model="dataUpdate.firstName"
                 :counter="20"
                 label="First name"
+                :disabled="!dataUpdate.id"
                 required
               />
             </v-col>
@@ -136,6 +143,7 @@
                 v-model="dataUpdate.lastName"
                 :counter="20"
                 label="Last name"
+                :disabled="!dataUpdate.id"
                 required
               />
             </v-col>
@@ -144,6 +152,7 @@
             v-model="dataUpdate.gender"
             inline
             required
+            :disabled="!dataUpdate.id"
           >
             <v-radio label="Male" value="male"></v-radio>
             <v-radio label="Female" value="female"></v-radio>
@@ -153,25 +162,30 @@
             label="Email address"
             placeholder="johndoe@gmail.com"
             type="email"
+            :disabled="!dataUpdate.id"
             required
           />
           <v-textarea
             v-model="dataUpdate.description"
             label="description"
+            :disabled="!dataUpdate.id"
           />
           <v-date-input 
             clearable 
             label="Date input"
             v-model="dataUpdate.birthDate"
+            :disabled="!dataUpdate.id"
             required
           />
           <v-file-input
             v-model="dataUpdate.file"
             label="upload a file"
             accept="file/*"
+            :disabled="!dataUpdate.id"
           />
 
           <v-btn 
+            :disabled="!dataUpdate.id"
             @click="editUploadFile">Update</v-btn>
         </v-form>
       </v-col>
@@ -193,6 +207,7 @@ interface Doc {
   description: string;
   fileName: string;
   createdAt: string;
+  updatedAt: string;
   file?: File;
 }
 
