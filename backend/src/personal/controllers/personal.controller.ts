@@ -74,7 +74,7 @@ export class PersonalController {
       personalInfo.filePath = file.path;
       personalInfo.updatedAt = new Date();
     }
-    return await this.personalService.updatePost(id, personalInfo);
+    return await this.personalService.updatePost(id, personalInfo,file);
   }
   @Delete(':id')
   async delete(@Param('id') id: number): Promise<DeleteResult> {

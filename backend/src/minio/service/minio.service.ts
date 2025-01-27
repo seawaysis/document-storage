@@ -28,7 +28,7 @@ export class MinioService {
           };
           const info = await this.minioClient.putObject(
             this.bucketName,
-            file.originalname,
+            file.filename,
             file.buffer,
             file.size,
             metaData

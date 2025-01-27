@@ -18,7 +18,10 @@ export class PersonalService {
 
   // การทำงานต่างๆของ แต่ละเส้น api
   // support เส้น post
-  async createPost(personalInfo: PersonalInfo,file: Express.Multer.File): Promise<PersonalInfo> {
+  async createPost(
+    personalInfo: PersonalInfo,
+    file: Express.Multer.File
+  ): Promise<PersonalInfo> {
     try{
       file.buffer = fs.readFileSync(file.path);
       const info = await this.minioService.uploadFileMinio(file);
@@ -44,7 +47,14 @@ export class PersonalService {
   async updatePost(
     id: number,
     personalInfo: PersonalInfo,
+    file: Express.Multer.File
   ): Promise<UpdateResult> {
+    file.buffer = fs.readFileSync(file.path);
+    const info = await this.minioService.uploadFileMinio(file);
+      if(info.etag){
+        personalInfo.etag = info.etag;
+        //personalInfo.versionId = info?.versionId;
+      }
     return await this.personalInfoRepository.update(id, personalInfo);
   }
   // support เส้น delete

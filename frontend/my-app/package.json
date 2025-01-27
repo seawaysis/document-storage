@@ -15,7 +15,6 @@
     "@mdi/font": "7.4.47",
     "axios": "^1.7.9",
     "core-js": "^3.37.1",
-    "pdf-vue3": "^1.0.12",
     "roboto-fontface": "*",
     "vue": "^3.4.31",
     "vuetify": "^3.6.14"
