@@ -12,4 +12,5 @@ export interface PersonalInfo {
   versionId? : string;
   createdAt?: Date;
   updatedAt?: Date;
+  file?: any;
 }

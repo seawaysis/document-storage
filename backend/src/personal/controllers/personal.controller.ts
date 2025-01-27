@@ -28,7 +28,11 @@ export class PersonalController {
 // method ต่างๆ
   @Get()
   async findAll(): Promise<PersonalInfo[]> {
-    return await this.personalService.findAllPosts();
+    const listDoc = await this.personalService.findAllPosts();
+    for (let i :number = 0; i < listDoc.length;i++ ){
+      listDoc[i].file = fs.readFileSync(listDoc[i].filePath); //read file from local storage
+    }
+    return listDoc;
   }
   @Post()
   @UseInterceptors(FileInterceptor('file', {
@@ -64,31 +68,17 @@ export class PersonalController {
     @Body() personalInfo: PersonalInfo,
     @UploadedFile() file: Express.Multer.File
   ): Promise<UpdateResult> {
-    this.delFile(id);
-    personalInfo.fileName = file.filename;
-    personalInfo.filePath = file.path;
-    personalInfo.updatedAt = new Date();
+    if(file){
+      const status = this.personalService.deleteFile(id);
+      personalInfo.fileName = file.filename;
+      personalInfo.filePath = file.path;
+      personalInfo.updatedAt = new Date();
+    }
     return await this.personalService.updatePost(id, personalInfo);
   }
   @Delete(':id')
   async delete(@Param('id') id: number): Promise<DeleteResult> {
-    this.delFile(id);
+    const status = await this.personalService.deleteFile(id);
     return await this.personalService.deletePost(id);
-  }
-
-  async delFile(id: number){
-    const docDel:PersonalInfo = await this.personalService.findIdDoc(id);
-    try{
-      fs.unlink(docDel.filePath, (err) => {
-        if (err) {
-          console.error(`Error removing file: ${err}`);
-          return;
-        }
-      
-        console.log(`File ${docDel.filePath} has been successfully removed.`);
-      });
-    }catch(err){
-      console.error(err.message);
-    }
   }
 }

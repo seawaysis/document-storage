@@ -19,7 +19,8 @@
             v-for="(v,i) in listDoc" 
             :key="i">
             <tr>
-              <td>{{ v.fileName }}</td>
+              <td>{{ v.fileName }}
+              </td>
               <td>{{ v.createdAt }}</td>
               <td>{{ v.updatedAt }}</td>
               <td>
@@ -143,9 +144,6 @@
       </v-col>
     </v-row>
 
-    <dialogEdit 
-      :dialogCompose="dialogCompose"
-    />
     <v-row justify="center" class="ma-2">
       <v-col 
         :cols="10" 
@@ -230,12 +228,13 @@
         </v-form>
       </v-col>
     </v-row>
+    <!-- <PDF src="http://backend.localhost/uploads/file-1737950034996-567748617-3c24033d-e898-4df3-9a26-706d2a8ae62e.pdf" /> -->
   </v-container>
 </template>
 <script lang="ts">
 import axios from 'axios';
 import { onMounted,ref } from 'vue';
-import dialogEdit from './dialogEdit.vue';
+//import PDF from 'pdf-vue3';
 
 interface Doc {
   id: number;
@@ -272,11 +271,10 @@ interface DataUpdate {
 }
 export default {
   components: {
-    dialogEdit
+
   },
   setup() {
     const api_backend = import.meta.env.VITE_API_BACKEND;
-    const dialogCompose = ref<boolean>(false);
     const dataUpload = ref<DataUpload>({
       firstName: '',
       lastName: '',
@@ -303,7 +301,6 @@ export default {
     const listDoc = ref<Doc[]>();
     
     const editDoc = (id:number) => {
-      dialogCompose.value = true;
       const getData = listDoc.value?.find(item=>item.id === id);
       if(getData){
         dataUpdate.value = {
@@ -321,6 +318,18 @@ export default {
     }
     const delDoc = async (id : number) => {
       await axios.delete(api_backend+'personal/'+id).then(res => res.data); // replace with your API URL
+      if(id === dataUpdate.value.id){
+        dataUpdate.value = {
+            id: 0,
+            firstName: '',
+            lastName: '',
+            gender: '',
+            email: '',
+            description: '',
+            birthDate: new Date(),
+            file: null,
+          }
+      }
       loadData();
     }
     const uploadFile = async () => {
@@ -405,6 +414,7 @@ export default {
       loadData();
     });
     return {
+      //PDF,
       dataUpload,
       dataUpdate,
       editName,
@@ -412,7 +422,6 @@ export default {
       listDoc,
       editDoc,
       delDoc,
-      dialogCompose,
       uploadFile,
       editUploadFile,
     };

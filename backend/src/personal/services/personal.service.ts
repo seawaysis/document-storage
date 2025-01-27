@@ -22,8 +22,10 @@ export class PersonalService {
     try{
       file.buffer = fs.readFileSync(file.path);
       const info = await this.minioService.uploadFileMinio(file);
-      personalInfo.etag = info.etag;
-      personalInfo.versionId = info.versionId;
+      if(info.etag){
+        personalInfo.etag = info.etag;
+        //personalInfo.versionId = info?.versionId;
+      }
     }catch(e){
       console.log(e);
     }
@@ -48,5 +50,19 @@ export class PersonalService {
   // support เส้น delete
   async deletePost(id: number): Promise<DeleteResult> {
     return await this.personalInfoRepository.delete(id);
+  }
+  async deleteFile(id: number): Promise<string>{
+    const docDel:PersonalInfo = await this.findIdDoc(id);
+    const info = await this.minioService.deleteFileMinio(docDel.fileName);
+      try{
+        fs.unlink(docDel.filePath, (err) => {
+          if (err) {
+            return `Error removing file: ${err}`;
+          }
+          return `File ${docDel.filePath} has been successfully removed.`;
+        });
+      }catch(err){
+        return err.message;
+      }
   }
 }
