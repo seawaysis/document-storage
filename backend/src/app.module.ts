@@ -3,8 +3,8 @@ import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { PersonalModule } from './personal/personal.module';
-import { MinioModule } from './minio/minio.module';
+import { PersonalModule } from './api/personal/personal.module';
+// import { MinioModule } from './utilities/minio/minio.module';
 
 @Module({
   imports: [
@@ -24,9 +24,9 @@ import { MinioModule } from './minio/minio.module';
       },
     }),
     PersonalModule,
-    MinioModule,
+    // MinioModule,
   ],
-  controllers: [AppController,],
+  controllers: [AppController],
   providers: [AppService],
 })
 export class AppModule {}

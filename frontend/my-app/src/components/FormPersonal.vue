@@ -97,12 +97,14 @@
           <v-row>
             <v-col
               cols="12"
-              sm="6"
+              sm="5"
+              md="6"
             >
               <v-radio-group 
                 v-model="dataUpload.gender"
                 inline
                 required
+                class="d-flex justify-center"
               >
                 <v-radio label="Male" value="male"></v-radio>
                 <v-radio label="Female" value="female"></v-radio>
@@ -110,7 +112,8 @@
             </v-col>
             <v-col
               cols="12"
-              sm="6"
+              sm="7"
+              md="6"
             >
               <v-date-input 
                 clearable 
@@ -180,7 +183,8 @@
           <v-row>
             <v-col
               cols="12"
-              sm="6"
+              sm="5"
+              md="6"
             >
               <v-radio-group 
                 v-model="dataUpdate.gender"
@@ -192,7 +196,10 @@
                 <v-radio label="Female" value="female"></v-radio>
               </v-radio-group>
             </v-col>
-            <v-col>
+            <v-col
+              sm="7"
+              md="6"
+            >
               <v-date-input 
                 clearable 
                 label="Birth day"
@@ -234,6 +241,7 @@
 <script lang="ts">
 import axios from 'axios';
 import { onMounted,ref } from 'vue';
+//import dayjs from 'dayjs';
 //import PDF from 'pdf-vue3';
 
 interface Doc {
@@ -314,7 +322,6 @@ export default {
           file: getData.file ?? null,
         }
       }
-      console.log(dataUpdate);
     }
     const delDoc = async (id : number) => {
       await axios.delete(api_backend+'personal/'+id).then(res => res.data); // replace with your API URL
